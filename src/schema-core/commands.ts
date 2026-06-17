@@ -9,6 +9,8 @@ export type SchemaCommand =
   | { type: 'add_column'; payload: { tableId: string; name?: string; type?: string } }
   | { type: 'update_column'; payload: { tableId: string; columnId: string; patch: Partial<{ name: string; type: string; nullable: boolean; defaultValue: string }> } }
   | { type: 'add_fk'; payload: { tableId: string; fromColumnId: string; toTableId: string; toColumnId: string } }
+  | { type: 'remove_fk'; payload: { tableId: string; fkId: string } }
+  | { type: 'toggle_primary_key'; payload: { tableId: string; columnId: string } }
   | { type: 'set_table_position'; payload: { tableId: string; x: number; y: number } }
   | { type: 'import_schema'; payload: { schema: SchemaIR } }
 
@@ -117,6 +119,31 @@ export function applyCommand(schema: SchemaIR, command: SchemaCommand): SchemaIR
         ),
       })
     }
+    case 'remove_fk':
+      return bumpRevision({
+        ...schema,
+        tables: schema.tables.map((t) =>
+          t.id === command.payload.tableId
+            ? { ...t, foreignKeys: t.foreignKeys.filter((fk) => fk.id !== command.payload.fkId) }
+            : t,
+        ),
+      })
+    case 'toggle_primary_key':
+      return bumpRevision({
+        ...schema,
+        tables: schema.tables.map((t) => {
+          if (t.id !== command.payload.tableId) {
+            return t
+          }
+          const isPrimary = t.primaryKey.includes(command.payload.columnId)
+          return {
+            ...t,
+            primaryKey: isPrimary
+              ? t.primaryKey.filter((columnId) => columnId !== command.payload.columnId)
+              : [...t.primaryKey, command.payload.columnId],
+          }
+        }),
+      })
     case 'set_table_position':
       return bumpRevision({
         ...schema,

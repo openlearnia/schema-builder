@@ -1,10 +1,13 @@
 import { useSchemaStore } from '../store/schemaStore'
 
+type TabId = 'schema' | 'sql' | 'data'
+
 interface ToolbarProps {
+  activeTab: TabId
   onApplyToRuntime: () => Promise<void>
 }
 
-export function Toolbar({ onApplyToRuntime }: ToolbarProps) {
+export function Toolbar({ activeTab, onApplyToRuntime }: ToolbarProps) {
   const dispatch = useSchemaStore((state) => state.dispatch)
   const undo = useSchemaStore((state) => state.undo)
   const redo = useSchemaStore((state) => state.redo)
@@ -16,9 +19,15 @@ export function Toolbar({ onApplyToRuntime }: ToolbarProps) {
   return (
     <header className="toolbar">
       <div className="row">
-        <button onClick={() => dispatch({ type: 'add_table', payload: {} })}>Add table</button>
-        <button onClick={undo}>Undo</button>
-        <button onClick={redo}>Redo</button>
+        {activeTab === 'schema' && (
+          <button onClick={() => dispatch({ type: 'add_table', payload: {} })}>Add table</button>
+        )}
+        {activeTab === 'schema' && (
+          <>
+            <button onClick={undo}>Undo</button>
+            <button onClick={redo}>Redo</button>
+          </>
+        )}
       </div>
       <div className="row">
         <span className={`chip ${syncStatus}`}>Sync: {syncStatus}</span>

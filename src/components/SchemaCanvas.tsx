@@ -21,7 +21,9 @@ export function SchemaCanvas() {
               <ul style={{ margin: '8px 0 0', paddingLeft: 16 }}>
                 {table.columns.map((column) => (
                   <li key={column.id}>
+                    {table.primaryKey.includes(column.id) ? '[PK] ' : ''}
                     {column.name}: {column.type}
+                    {!column.nullable ? ' NOT NULL' : ''}
                   </li>
                 ))}
               </ul>

@@ -1,8 +1,19 @@
 :root {
   color-scheme: dark;
-  font-family: Inter, Segoe UI, sans-serif;
-  background: #0b1220;
-  color: #e2e8f0;
+  font-family: Inter, 'Segoe UI', system-ui, sans-serif;
+  --bg: #0b1220;
+  --surface: #0f172a;
+  --surface-raised: #111827;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --danger: #b91c1c;
+  --success: #064e3b;
+  --warning: #78350f;
+  background: var(--bg);
+  color: var(--text);
 }
 
 * {
@@ -18,22 +29,65 @@ body,
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
 .appRoot {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   height: 100%;
+}
+
+.appHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-raised);
+  flex-wrap: wrap;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.tagline {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.tab {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
 }
 
 .toolbar {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem;
-  border-bottom: 1px solid #334155;
-  background: #111827;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: #0d1526;
 }
 
 .layout {
@@ -50,20 +104,46 @@ textarea {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   gap: 0.75rem;
-  border-left: 1px solid #334155;
+  border-left: 1px solid var(--border);
   padding: 0.75rem;
   overflow: auto;
 }
 
+.tabPane {
+  min-height: 0;
+  overflow: auto;
+  padding: 0.75rem;
+}
+
+.sqlPane {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr);
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.dataPane {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 0.75rem;
+  height: 100%;
+}
+
 .panel {
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   padding: 0.75rem;
 }
 
 .panel.compact {
   padding: 0.5rem 0.75rem;
+}
+
+.panel h3,
+.panel h4 {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
 }
 
 .field {
@@ -76,6 +156,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .row.between {
@@ -93,16 +174,35 @@ textarea {
   gap: 0.5rem;
 }
 
+.columnCard {
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  padding: 0.5rem;
+  background: #0b1324;
+}
+
+.columnFlags {
+  margin-top: 0.45rem;
+}
+
+.checkLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .chip {
   font-size: 0.75rem;
   border-radius: 9999px;
   padding: 0.2rem 0.55rem;
-  border: 1px solid #334155;
+  border: 1px solid var(--border);
 }
 
 .chip.ok,
 .chip.in-sync {
-  background: #064e3b;
+  background: var(--success);
 }
 
 .chip.error,
@@ -111,30 +211,53 @@ textarea {
 }
 
 .chip.needs-reconcile {
-  background: #78350f;
+  background: var(--warning);
 }
 
 .muted {
-  color: #94a3b8;
+  color: var(--muted);
   margin: 0;
 }
 
+.statusLine,
+.resultMeta {
+  font-size: 0.85rem;
+}
+
+.errorText {
+  color: #fca5a5;
+  margin: 0 0 0.5rem;
+}
+
+.dangerText {
+  color: #fca5a5;
+}
+
 textarea,
-input {
+input,
+select {
   background: #020617;
-  color: #e2e8f0;
-  border: 1px solid #334155;
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: 0.35rem;
   padding: 0.4rem 0.5rem;
 }
 
 textarea {
-  min-height: 200px;
+  min-height: 220px;
   width: 100%;
+  resize: vertical;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.sqlEditor textarea {
+  min-height: 320px;
 }
 
 button {
-  background: #1d4ed8;
+  background: var(--accent);
   color: white;
   border: 0;
   border-radius: 0.35rem;
@@ -142,8 +265,18 @@ button {
   cursor: pointer;
 }
 
+button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
 button.danger {
-  background: #b91c1c;
+  background: var(--danger);
 }
 
 button:disabled {
@@ -151,9 +284,82 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.warningList {
+.warningList,
+.fkList,
+.tableNav {
   margin: 0;
-  padding-left: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.fkItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.fkForm {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.tableNav {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.tableLink {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text);
+}
+
+.tableLink.active {
+  background: #1e293b;
+  border-color: var(--border);
+}
+
+.tableScroll {
+  overflow: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.dataTable th,
+.dataTable td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dataTable th {
+  background: #1e293b;
+  position: sticky;
+  top: 0;
+}
+
+.dataTable tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.resultsPanel,
+.dataPreview,
+.tableList {
+  min-height: 0;
 }
 
 @media (max-width: 1024px) {
@@ -164,6 +370,12 @@ button:disabled {
 
   .sidePane {
     border-left: 0;
-    border-top: 1px solid #334155;
+    border-top: 1px solid var(--border);
+  }
+
+  .sqlPane,
+  .dataPane {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
 }

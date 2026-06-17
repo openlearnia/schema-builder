@@ -1,14 +1,16 @@
-# Schema Builder
+# Database Lab
 
-Visual database schema builder for Openlearnia.
+Visual database schema builder with an integrated PGLite testing ground. Design tables on a canvas, apply DDL to a real in-browser Postgres, then run SQL queries and browse data — all in one app.
 
 ## Features
 
-- Visual table/column editor with relation edges
+- **Schema** — Visual table/column editor with relation edges (React Flow)
+- **SQL** — Run queries against the live PGLite database with tabular results
+- **Data** — Browse tables and preview rows
 - Canonical `SchemaIR` model with deterministic SQL generation
 - SQL import with unsupported statement preservation
 - Local autosave and revision history (undo/redo)
-- Runtime apply contract for PGLite playground integration
+- PGLite persistence via IndexedDB (`idb://openlearnia-database-lab`)
 
 ## Quick start
 
@@ -17,15 +19,22 @@ npm install
 npm run dev
 ```
 
-## Integration Contract
+Open the app, design tables on the **Schema** tab, click **Apply to PGLite**, then switch to **SQL** or **Data** to test your schema.
 
-The app looks for `window.__OPENLEARNIA_PGLITE_ADAPTER__` with:
+Applying a schema drops existing user tables in PGLite and recreates from the diagram (with a confirmation prompt when tables already exist).
 
-- `applyGeneratedSql(sql: string): Promise<{ ok: boolean; error?: string }>`
-- `getSchemaFromDb(): Promise<SchemaIR | null>`
+## Scripts
 
-If no adapter is present, Schema Builder runs in standalone mode.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Typecheck and production build |
+| `npm test` | Run Vitest unit and integration tests |
 
 ## Deploy
 
 Pushes to `main` deploy `dist/` to Cloudflare Pages via GitHub Actions (`.github/workflows/deploy.yml`). Required org secrets: `CF_API_TOKEN`, `CF_ACCOUNT_ID`. Pages project name is in `wrangler.toml`.
+
+## Note on pglite-playground
+
+The former `pglite-playground` tool has been merged into this project. See `projects/tools/pglite-playground/README.md` for the redirect.

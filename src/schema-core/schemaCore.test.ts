@@ -40,4 +40,19 @@ describe('schema core', () => {
     const issues = validateSchema(schema)
     expect(issues.some((issue) => issue.message.includes('Duplicate table name'))).toBe(true)
   })
+
+  it('toggles primary keys on columns', () => {
+    let schema = createEmptySchema()
+    schema = applyCommand(schema, { type: 'add_table', payload: { name: 'users' } })
+    const columnId = schema.tables[0].columns[0].id
+
+    schema = applyCommand(schema, {
+      type: 'toggle_primary_key',
+      payload: { tableId: schema.tables[0].id, columnId },
+    })
+    expect(schema.tables[0].primaryKey).toContain(columnId)
+
+    const sql = generateSql(schema)
+    expect(sql).toContain('PRIMARY KEY')
+  })
 })
