@@ -1,0 +1,169 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, Segoe UI, sans-serif;
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.appRoot {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 1px solid #334155;
+  background: #111827;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  min-height: 0;
+}
+
+.canvasPane {
+  min-height: 0;
+}
+
+.sidePane {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.75rem;
+  border-left: 1px solid #334155;
+  padding: 0.75rem;
+  overflow: auto;
+}
+
+.panel {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.panel.compact {
+  padding: 0.5rem 0.75rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row.between {
+  justify-content: space-between;
+}
+
+.stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.columnRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.chip {
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid #334155;
+}
+
+.chip.ok,
+.chip.in-sync {
+  background: #064e3b;
+}
+
+.chip.error,
+.chip.conflict {
+  background: #7f1d1d;
+}
+
+.chip.needs-reconcile {
+  background: #78350f;
+}
+
+.muted {
+  color: #94a3b8;
+  margin: 0;
+}
+
+textarea,
+input {
+  background: #020617;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 0.35rem;
+  padding: 0.4rem 0.5rem;
+}
+
+textarea {
+  min-height: 200px;
+  width: 100%;
+}
+
+button {
+  background: #1d4ed8;
+  color: white;
+  border: 0;
+  border-radius: 0.35rem;
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+}
+
+button.danger {
+  background: #b91c1c;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.warningList {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 55vh 1fr;
+  }
+
+  .sidePane {
+    border-left: 0;
+    border-top: 1px solid #334155;
+  }
+}
