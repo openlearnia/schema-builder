@@ -25,3 +25,7 @@ The app looks for `window.__OPENLEARNIA_PGLITE_ADAPTER__` with:
 - `getSchemaFromDb(): Promise<SchemaIR | null>`
 
 If no adapter is present, Schema Builder runs in standalone mode.
+
+## Deploy
+
+Pushes to `main` deploy `dist/` to Cloudflare Pages via GitHub Actions (`.github/workflows/deploy.yml`). Required org secrets: `CF_API_TOKEN`, `CF_ACCOUNT_ID`. Pages project name is in `wrangler.toml`.
