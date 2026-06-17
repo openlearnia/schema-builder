@@ -1,40 +1,42 @@
 import { useMemo } from 'react'
-import { Background, Controls, type Edge, type Node, ReactFlow } from '@xyflow/react'
+import { Background, Controls, type NodeTypes, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useSchemaStore } from '../store/schemaStore'
 import { createId } from '../schema-core/utils'
+import { TableNode, type TableFlowNode } from './TableNode'
+
+const nodeTypes: NodeTypes = {
+  tableNode: TableNode,
+}
 
 export function SchemaCanvas() {
   const schema = useSchemaStore((state) => state.history.present)
+  const selectedTableId = useSchemaStore((state) => state.selectedTableId)
   const dispatch = useSchemaStore((state) => state.dispatch)
   const setSelectedTable = useSchemaStore((state) => state.setSelectedTable)
 
-  const nodes = useMemo<Node[]>(
+  const nodes = useMemo<TableFlowNode[]>(
     () =>
       schema.tables.map((table) => ({
         id: table.id,
+        type: 'tableNode',
         position: table.position ?? { x: 80, y: 80 },
+        selected: table.id === selectedTableId,
         data: {
-          label: (
-            <div style={{ minWidth: 180 }}>
-              <strong>{table.name}</strong>
-              <ul style={{ margin: '8px 0 0', paddingLeft: 16 }}>
-                {table.columns.map((column) => (
-                  <li key={column.id}>
-                    {table.primaryKey.includes(column.id) ? '[PK] ' : ''}
-                    {column.name}: {column.type}
-                    {!column.nullable ? ' NOT NULL' : ''}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ),
+          tableName: table.name,
+          columns: table.columns.map((column) => ({
+            id: column.id,
+            name: column.name,
+            type: column.type,
+            nullable: column.nullable,
+            isPrimary: table.primaryKey.includes(column.id),
+          })),
         },
       })),
-    [schema.tables],
+    [schema.tables, selectedTableId],
   )
 
-  const edges = useMemo<Edge[]>(
+  const edges = useMemo(
     () =>
       schema.tables.flatMap((table) =>
         table.foreignKeys.map((fk) => ({
@@ -42,16 +44,19 @@ export function SchemaCanvas() {
           source: table.id,
           target: fk.toTableId,
           label: 'FK',
+          className: 'er-edge',
         })),
       ),
     [schema.tables],
   )
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div className="schema-canvas">
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeTypes}
+        colorMode="dark"
         fitView
         onNodeDragStop={(_, node) => {
           dispatch({
@@ -61,8 +66,8 @@ export function SchemaCanvas() {
         }}
         onNodeClick={(_, node) => setSelectedTable(node.id)}
       >
-        <Background />
-        <Controls />
+        <Background gap={20} size={1} />
+        <Controls showInteractive={false} />
       </ReactFlow>
     </div>
   )

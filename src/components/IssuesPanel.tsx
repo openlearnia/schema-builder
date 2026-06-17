@@ -16,8 +16,9 @@ export function IssuesPanel() {
       <h3>Validation</h3>
       <ul className="warningList">
         {issues.map((issue) => (
-          <li key={issue.id}>
-            <strong>{issue.severity.toUpperCase()}:</strong> {issue.message}
+          <li key={issue.id} className={issue.severity === 'error' ? 'issue-error' : 'issue-warning'}>
+            <span className="issue-severity">{issue.severity.toUpperCase()}</span>
+            {issue.message}
           </li>
         ))}
       </ul>

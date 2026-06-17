@@ -117,7 +117,11 @@ function App() {
             Data
           </button>
         </nav>
-        <span className={`chip ${dbStatus === 'ready' ? 'ok' : dbStatus === 'error' ? 'error' : ''}`}>
+        <span
+          className={`chip ${
+            dbStatus === 'ready' ? 'ok' : dbStatus === 'error' ? 'error' : 'loading'
+          }`}
+        >
           {dbStatus === 'ready' ? 'PGLite connected' : dbStatus === 'error' ? 'PGLite error' : 'Starting…'}
         </span>
       </header>
