@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useGeneratedSql, useSchemaStore } from '../store/schemaStore'
+import { SqlEditor } from './SqlEditor'
 
 export function SqlPanel() {
   const generatedSql = useGeneratedSql()
@@ -14,10 +15,11 @@ export function SqlPanel() {
         <h3>SQL</h3>
         <button onClick={() => importFromSql(sql)}>Reconcile from SQL</button>
       </div>
-      <textarea
+      <SqlEditor
         value={sql}
-        onChange={(event) => setDraftSql(event.target.value)}
-        aria-label="Generated SQL preview"
+        onChange={setDraftSql}
+        ariaLabel="Generated SQL preview"
+        className="sqlPreview"
       />
       {warnings.length > 0 && (
         <ul className="warningList">

@@ -13,6 +13,7 @@ export function Toolbar({ activeTab, onApplyToRuntime }: ToolbarProps) {
   const redo = useSchemaStore((state) => state.redo)
   const issues = useSchemaStore((state) => state.issues)
   const syncStatus = useSchemaStore((state) => state.syncStatus)
+  const isDirty = useSchemaStore((state) => state.history.present !== state.lastApplied)
 
   const blockingErrors = issues.filter((issue) => issue.severity === 'error').length
 
@@ -30,6 +31,7 @@ export function Toolbar({ activeTab, onApplyToRuntime }: ToolbarProps) {
         )}
       </div>
       <div className="row">
+        {isDirty && <span className="chip dirty">Dirty</span>}
         <span className={`chip ${syncStatus}`}>Sync: {syncStatus}</span>
         <span className={`chip ${blockingErrors > 0 ? 'error' : 'ok'}`}>
           {blockingErrors > 0 ? `${blockingErrors} blocking issues` : 'No blocking issues'}

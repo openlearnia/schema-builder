@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { runQuery, type QueryResult } from '../integration/pgliteService'
+import { SqlEditor } from './SqlEditor'
 
 const DEFAULT_QUERY = 'SELECT current_database() AS database, version() AS postgres_version;'
 
@@ -20,12 +21,7 @@ export function SqlTab() {
       <div className="sqlEditor">
         <label className="field">
           <span>SQL query</span>
-          <textarea
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            aria-label="SQL query editor"
-            spellCheck={false}
-          />
+            <SqlEditor value={query} onChange={setQuery} ariaLabel="SQL query editor" />
         </label>
         <div className="row">
           <button onClick={() => void handleRun()} disabled={running}>

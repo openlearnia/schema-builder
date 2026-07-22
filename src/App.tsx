@@ -3,6 +3,7 @@ import { DataTab } from './components/DataTab'
 import { IssuesPanel } from './components/IssuesPanel'
 import { SchemaCanvas } from './components/SchemaCanvas'
 import { SchemaInspector } from './components/SchemaInspector'
+import { ShortcutsOverlay } from './components/ShortcutsOverlay'
 import { SqlPanel } from './components/SqlPanel'
 import { SqlTab } from './components/SqlTab'
 import { Toolbar } from './components/Toolbar'
@@ -19,11 +20,12 @@ type TabId = 'schema' | 'sql' | 'data'
 
 function App() {
   const init = useSchemaStore((state) => state.init)
-  const schema = useSchemaStore((state) => state.history.present)
   const loadFromRuntimeSchema = useSchemaStore((state) => state.loadFromRuntimeSchema)
+  const markApplied = useSchemaStore((state) => state.markApplied)
   const undo = useSchemaStore((state) => state.undo)
   const redo = useSchemaStore((state) => state.redo)
   const [activeTab, setActiveTab] = useState<TabId>('schema')
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [runtimeMessage, setRuntimeMessage] = useState('Initializing PGLite…')
   const [dbStatus, setDbStatus] = useState<'loading' | 'ready' | 'error'>('loading')
 
@@ -63,6 +65,17 @@ function App() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [redo, undo])
 
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === '?' && !event.metaKey && !event.ctrlKey) {
+        setShortcutsOpen(true)
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   async function applyToRuntime(): Promise<void> {
     const tables = await listTables()
     if (tables.length > 0) {
@@ -75,13 +88,15 @@ function App() {
     }
 
     setRuntimeMessage('Applying schema…')
-    const sql = generateSql(schema)
+    const schemaToApply = useSchemaStore.getState().history.present
+    const sql = generateSql(schemaToApply)
     const result = await applyGeneratedSql(sql)
     if (!result.ok) {
       setRuntimeMessage(`Apply failed: ${result.error ?? 'Unknown error'}`)
       return
     }
 
+    markApplied(schemaToApply)
     const synced = await getSchemaFromDb()
     if (synced) {
       loadFromRuntimeSchema(synced)
@@ -157,6 +172,7 @@ function App() {
 
       {activeTab === 'sql' && <SqlTab />}
       {activeTab === 'data' && <DataTab />}
+      <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   )
 }

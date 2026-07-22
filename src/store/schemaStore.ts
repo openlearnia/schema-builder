@@ -9,9 +9,11 @@ import type { SchemaIR, ValidationIssue } from '../schema-core/types'
 import { validateSchema } from '../schema-core/validators'
 
 const STORAGE_KEY = 'openlearnia:schema-builder:history'
+const initialSchema = createEmptySchema()
 
 interface SchemaStore {
   history: SchemaHistory
+  lastApplied: SchemaIR
   issues: ValidationIssue[]
   syncStatus: 'in-sync' | 'needs-reconcile' | 'conflict'
   importWarnings: string[]
@@ -20,6 +22,7 @@ interface SchemaStore {
   dispatch: (command: SchemaCommand) => void
   importFromSql: (sql: string) => void
   loadFromRuntimeSchema: (schema: SchemaIR) => void
+  markApplied: (schema: SchemaIR) => void
   undo: () => void
   redo: () => void
   setSelectedTable: (tableId?: string) => void
@@ -30,14 +33,15 @@ function evaluateIssues(schema: SchemaIR): ValidationIssue[] {
 }
 
 export const useSchemaStore = create<SchemaStore>((setState, getState) => ({
-  history: createHistory(createEmptySchema()),
+  history: createHistory(initialSchema),
+  lastApplied: initialSchema,
   issues: [],
   syncStatus: 'in-sync',
   importWarnings: [],
   selectedTableId: undefined,
   async init() {
     const persisted = await get<SchemaHistory>(STORAGE_KEY)
-    if (!persisted) {
+    if (!persisted || getState().history.present !== initialSchema) {
       return
     }
     setState({
@@ -53,7 +57,7 @@ export const useSchemaStore = create<SchemaStore>((setState, getState) => ({
     setState({
       history: updated,
       issues: evaluateIssues(updated.present),
-      syncStatus: command.type === 'import_schema' ? 'in-sync' : 'needs-reconcile',
+      syncStatus: 'needs-reconcile',
       importWarnings: [],
     })
   },
@@ -65,7 +69,7 @@ export const useSchemaStore = create<SchemaStore>((setState, getState) => ({
     setState({
       history: updated,
       issues: evaluateIssues(parsed.schema),
-      syncStatus: parsed.warnings.length > 0 ? 'conflict' : 'in-sync',
+      syncStatus: parsed.warnings.length > 0 ? 'conflict' : 'needs-reconcile',
       importWarnings: parsed.warnings,
       selectedTableId: parsed.schema.tables[0]?.id,
     })
@@ -76,9 +80,16 @@ export const useSchemaStore = create<SchemaStore>((setState, getState) => ({
     void set(STORAGE_KEY, updated)
     setState({
       history: updated,
+      lastApplied: updated.present,
       issues: evaluateIssues(schema),
       syncStatus: 'in-sync',
       importWarnings: [],
+    })
+  },
+  markApplied(schema) {
+    setState({
+      lastApplied: schema,
+      syncStatus: 'in-sync',
     })
   },
   undo() {

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Background, Controls, type NodeTypes, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
+import { createBlogSampleSchema } from '../schema-core/sampleSchema'
 import { useSchemaStore } from '../store/schemaStore'
 import { createId } from '../schema-core/utils'
 import { TableNode, type TableFlowNode } from './TableNode'
@@ -49,6 +50,31 @@ export function SchemaCanvas() {
       ),
     [schema.tables],
   )
+
+  if (schema.tables.length === 0) {
+    return (
+      <div className="schema-canvas empty-canvas">
+        <div className="empty-cta">
+          <p>Start a schema</p>
+          <span className="muted">Add your first table or explore a working blog example.</span>
+          <div className="row">
+            <button type="button" onClick={() => dispatch({ type: 'add_table', payload: {} })}>
+              Add table
+            </button>
+            <button
+              type="button"
+              className="ghost"
+              onClick={() =>
+                dispatch({ type: 'import_schema', payload: { schema: createBlogSampleSchema() } })
+              }
+            >
+              Load sample (users + posts)
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="schema-canvas">
