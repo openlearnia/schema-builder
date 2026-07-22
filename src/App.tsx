@@ -18,6 +18,17 @@ import { useSchemaStore } from './store/schemaStore'
 
 type TabId = 'schema' | 'sql' | 'data'
 
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false
+  }
+
+  return (
+    target.isContentEditable ||
+    target.closest('input, textarea, select, [contenteditable="true"]') !== null
+  )
+}
+
 function App() {
   const init = useSchemaStore((state) => state.init)
   const loadFromRuntimeSchema = useSchemaStore((state) => state.loadFromRuntimeSchema)
@@ -51,6 +62,10 @@ function App() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (isEditableTarget(event.target)) {
+        return
+      }
+
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault()
         if (event.shiftKey) {
@@ -67,7 +82,12 @@ function App() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === '?' && !event.metaKey && !event.ctrlKey) {
+      if (
+        !isEditableTarget(event.target) &&
+        event.key === '?' &&
+        !event.metaKey &&
+        !event.ctrlKey
+      ) {
         setShortcutsOpen(true)
       }
     }

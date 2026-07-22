@@ -51,4 +51,14 @@ describe('Database Lab app', () => {
 
     expect(screen.getByRole('dialog', { name: /keyboard shortcuts/i })).toBeTruthy()
   })
+
+  it('allows question marks to be typed in the SQL editor', () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: /^sql$/i }))
+    const editor = screen.getByRole('textbox', { name: /sql query editor/i })
+    fireEvent.keyDown(editor, { key: '?' })
+
+    expect(screen.queryByRole('dialog', { name: /keyboard shortcuts/i })).toBeNull()
+  })
 })

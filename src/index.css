@@ -420,7 +420,9 @@ textarea {
 .sqlLineNumbers {
   display: grid;
   align-content: start;
+  min-height: 0;
   min-width: 2.75rem;
+  overflow: hidden;
   padding: 0.4rem 0.5rem;
   color: var(--muted);
   background: var(--surface-raised);
