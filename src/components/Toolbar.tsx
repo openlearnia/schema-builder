@@ -17,7 +17,7 @@ export function Toolbar({ activeTab, onApplyToRuntime }: ToolbarProps) {
   const blockingErrors = issues.filter((issue) => issue.severity === 'error').length
 
   return (
-    <header className="toolbar">
+    <section className="toolbar" aria-label="Schema actions">
       <div className="row">
         {activeTab === 'schema' && (
           <button onClick={() => dispatch({ type: 'add_table', payload: {} })}>Add table</button>
@@ -42,6 +42,6 @@ export function Toolbar({ activeTab, onApplyToRuntime }: ToolbarProps) {
           Apply to PGLite
         </button>
       </div>
-    </header>
+    </section>
   )
 }

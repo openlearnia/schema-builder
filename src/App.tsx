@@ -92,10 +92,23 @@ function App() {
   return (
     <div className="appRoot">
       <header className="appHeader">
-        <div className="brand">
+        <div className="brandRow">
           <h1>Database Lab</h1>
-          <p className="muted tagline">Design schemas visually, test them in-browser with PGLite</p>
+          <a href="https://openlearnia.com">Openlearnia</a>
+          <a
+            href="https://github.com/openlearnia/schema-builder"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
         </div>
+        <span className="privacyChip" role="status">
+          Runs locally — nothing leaves your device
+        </span>
+      </header>
+
+      <div className="navigationBar">
         <nav className="tabs" aria-label="Main navigation">
           <button
             className={activeTab === 'schema' ? 'tab active' : 'tab'}
@@ -124,7 +137,7 @@ function App() {
         >
           {dbStatus === 'ready' ? 'PGLite connected' : dbStatus === 'error' ? 'PGLite error' : 'Starting…'}
         </span>
-      </header>
+      </div>
 
       <Toolbar activeTab={activeTab} onApplyToRuntime={applyToRuntime} />
 
